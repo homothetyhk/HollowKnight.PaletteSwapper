@@ -51,6 +51,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Settings.cs" />
+    <Compile Include="Disco.cs" />
     <Compile Include="PaletteSwapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
