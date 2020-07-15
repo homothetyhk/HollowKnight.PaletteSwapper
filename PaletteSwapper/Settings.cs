@@ -7,24 +7,12 @@ using Modding;
 
 namespace PaletteSwapper
 {
-    public class SaveSettings : ModSettings
-    {
-
-    }
+    [Serializable]
     public class GlobalSettings : ModSettings
     {
         public void Setup()
         {
             if (Palette != null) return;
-
-            Palette = new SerializableFloatDictionary();
-            foreach (string zone in Enum.GetNames(typeof(MapZone)))
-            {
-                Palette[zone + ".r"] = 1f;
-                Palette[zone + ".g"] = 1f;
-                Palette[zone + ".b"] = 1f;
-                Palette[zone + ".a"] = 1f;
-            }
 
             RandomByMapZone = true;
             RandomByRoom = false;
@@ -33,52 +21,24 @@ namespace PaletteSwapper
             DiscoTimer = 0.75f;
             LighterColors = false;
             DarkerColors = false;
-            PaletteSwapper.instance.SaveGlobalSettings();
+            Palette = new SerializableFloatDictionary();
+            foreach (string zone in Enum.GetNames(typeof(MapZone)))
+            {
+                Palette[zone + ".r"] = 1f;
+                Palette[zone + ".g"] = 1f;
+                Palette[zone + ".b"] = 1f;
+                Palette[zone + ".a"] = 1f;
+            }
+            PaletteSwapper.instance.GlobalSettings = this;
         }
 
-        public bool RandomByMapZone
-        {
-            get => GetBool(true);
-            set => SetBool(value);
-        }
-
-        public bool RandomByRoom
-        {
-            get => GetBool(false);
-            set => SetBool(value);
-        }
-
-        public bool UsePaletteFromSettings
-        {
-            get => GetBool(false);
-            set => SetBool(value);
-        }
-
+        public bool RandomByMapZone;
+        public bool RandomByRoom;
+        public bool Disco;
+        public float DiscoTimer;
+        public bool LighterColors;
+        public bool DarkerColors;
+        public bool UsePaletteFromSettings;
         public SerializableFloatDictionary Palette;
-
-        public bool Disco
-        {
-            get => GetBool(false);
-            set => SetBool(value);
-        }
-
-        public float DiscoTimer
-        {
-            get => GetFloat(0.75f);
-            set => SetFloat(value);
-        }
-
-        public bool LighterColors
-        {
-            get => GetBool(false);
-            set => SetBool(value);
-        }
-
-        public bool DarkerColors
-        {
-            get => GetBool(false);
-            set => SetBool(value);
-        }
-
     }
 }

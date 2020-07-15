@@ -41,7 +41,7 @@ namespace PaletteSwapper
                 color = PaletteSwapper.instance.RandomColor();
                 yield return new WaitUntil(() => GameManager.instance != null && GameManager.instance.IsGameplayScene() && GameManager.instance.sm != null);
                 SceneManager.SetLighting(color, SceneManager.AmbientIntesityMix);
-                yield return new WaitForSeconds(PaletteSwapper.instance.GlobalSettings.DiscoTimer);
+                yield return new WaitForSeconds(PaletteSwapper.instance.Settings.DiscoTimer);
             }
         }
 

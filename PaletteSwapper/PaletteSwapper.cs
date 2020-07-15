@@ -10,10 +10,17 @@ using Random = System.Random;
 
 namespace PaletteSwapper
 {
-#pragma warning disable CS0618
-    public class PaletteSwapper : Mod<SaveSettings,GlobalSettings>, ITogglableMod
+    public class PaletteSwapper : Mod, ITogglableMod
     {
         public static PaletteSwapper instance;
+
+        public GlobalSettings Settings = new GlobalSettings();
+
+        public override ModSettings GlobalSettings 
+        { 
+            get => Settings; 
+            set => Settings = value as GlobalSettings; 
+        }
 
         Random rand;
         Dictionary<string, Color> palette;
@@ -22,27 +29,33 @@ namespace PaletteSwapper
         public override void Initialize()
         {
             instance = this;
-            GlobalSettings.Setup();
+            Settings.Setup();
 
             rand = new Random();
             palette = new Dictionary<string, Color>();
             defaultColor = RandomColor();
 
-            if (GlobalSettings.Disco)
+            if (Settings.Disco)
             {
                 Disco.Setup();
             }
-            else if (GlobalSettings.RandomByMapZone)
+            else if (Settings.RandomByMapZone)
             {
                 On.SceneManager.SetLighting += OverrideSetLightingByZone;
             }
-            else if (GlobalSettings.RandomByRoom)
+            else if (Settings.RandomByRoom)
             {
                 On.SceneManager.SetLighting += OverrideSetLightingByScene;
             }
-            else if (GlobalSettings.UsePaletteFromSettings)
+            else if (Settings.UsePaletteFromSettings)
             {
-                foreach (var kvp in GlobalSettings.Palette)
+                bool CheckIfWellFormatted(string key, string part0, string part1)
+                {
+                    string[] parts = key.Split('.');
+                    return parts[0] == part0 && parts[1] == part1;
+                }
+
+                foreach (var kvp in Settings.Palette)
                 {
                     string zone = kvp.Key.Split('.')[0];
                     if (!palette.ContainsKey(zone))
@@ -51,10 +64,10 @@ namespace PaletteSwapper
                         {
                             palette[zone] = new Color
                             {
-                                r = GlobalSettings.Palette.FirstOrDefault(_kvp => _kvp.Key.Split('.')[1] == "r").Value,
-                                g = GlobalSettings.Palette.FirstOrDefault(_kvp => _kvp.Key.Split('.')[1] == "g").Value,
-                                b = GlobalSettings.Palette.FirstOrDefault(_kvp => _kvp.Key.Split('.')[1] == "b").Value,
-                                a = GlobalSettings.Palette.FirstOrDefault(_kvp => _kvp.Key.Split('.')[1] == "a").Value,
+                                r = Settings.Palette.FirstOrDefault(_kvp => CheckIfWellFormatted(_kvp.Key, zone, "r")).Value,
+                                g = Settings.Palette.FirstOrDefault(_kvp => CheckIfWellFormatted(_kvp.Key, zone, "g")).Value,
+                                b = Settings.Palette.FirstOrDefault(_kvp => CheckIfWellFormatted(_kvp.Key, zone, "b")).Value,
+                                a = Settings.Palette.FirstOrDefault(_kvp => CheckIfWellFormatted(_kvp.Key, zone, "a")).Value,
                             };
                         }
                         catch (Exception e)
@@ -109,7 +122,7 @@ namespace PaletteSwapper
 
         public Color RandomColor()
         {
-            if (GlobalSettings.LighterColors)
+            if (Settings.LighterColors)
             {
                 return new Color
                 {
@@ -120,7 +133,7 @@ namespace PaletteSwapper
                 };
             }
 
-            else if (GlobalSettings.DarkerColors)
+            else if (Settings.DarkerColors)
             {
                 return new Color
                 {
