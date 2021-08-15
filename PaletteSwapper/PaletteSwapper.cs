@@ -10,29 +10,19 @@ using Random = System.Random;
 
 namespace PaletteSwapper
 {
-    public class PaletteSwapper : Mod, ITogglableMod
+    public partial class PaletteSwapper : Mod, ITogglableMod, IGlobalSettings<GlobalSettings>
     {
         public static PaletteSwapper instance;
+        public static GlobalSettings Settings { get; private set; } = new GlobalSettings();
 
-        public GlobalSettings Settings = new GlobalSettings();
-
-        public override ModSettings GlobalSettings 
-        { 
-            get => Settings; 
-            set => Settings = value as GlobalSettings; 
-        }
-
-        Random rand;
-        Dictionary<string, Color> palette;
+        private readonly static Random rand = new Random();
+        private readonly static Dictionary<string, Color> palette = new Dictionary<string, Color>();
         Color defaultColor;
 
         public override void Initialize()
         {
             instance = this;
-            Settings.Setup();
-
-            rand = new Random();
-            palette = new Dictionary<string, Color>();
+            palette.Clear();
             defaultColor = RandomColor();
 
             if (Settings.Disco)
@@ -49,36 +39,18 @@ namespace PaletteSwapper
             }
             else if (Settings.UsePaletteFromSettings)
             {
-                bool CheckIfWellFormatted(string key, string part0, string part1)
-                {
-                    string[] parts = key.Split('.');
-                    return parts[0] == part0 && parts[1] == part1;
-                }
-
                 foreach (var kvp in Settings.Palette)
                 {
-                    string zone = kvp.Key.Split('.')[0];
-                    if (!palette.ContainsKey(zone))
-                    {
-                        try
-                        {
-                            palette[zone] = new Color
-                            {
-                                r = Settings.Palette.FirstOrDefault(_kvp => CheckIfWellFormatted(_kvp.Key, zone, "r")).Value,
-                                g = Settings.Palette.FirstOrDefault(_kvp => CheckIfWellFormatted(_kvp.Key, zone, "g")).Value,
-                                b = Settings.Palette.FirstOrDefault(_kvp => CheckIfWellFormatted(_kvp.Key, zone, "b")).Value,
-                                a = Settings.Palette.FirstOrDefault(_kvp => CheckIfWellFormatted(_kvp.Key, zone, "a")).Value,
-                            };
-                        }
-                        catch (Exception e)
-                        {
-                            LogError($"Error loading color data from settings palette. " +
-                                $"Check that keys are formatted as \"MapZone.r\", \"MapZone.g\", \"MapZone.b\", and values are floating point numbers between 0 and 1.\n {e}");
-                        }
-                    }
+                    palette[kvp.Key] = kvp.Value;
                 }
                 On.SceneManager.SetLighting += OverrideSetLightingByZone;
             }
+        }
+
+        public static void Reload()
+        {
+            instance.Unload();
+            instance.Initialize();
         }
 
         public void Unload()
@@ -88,7 +60,7 @@ namespace PaletteSwapper
             Disco.Unload();
         }
 
-        public override string GetVersion() => "1.0";
+        public override string GetVersion() => "1.1";
 
         private void OverrideSetLightingByZone(On.SceneManager.orig_SetLighting orig, Color ambientLightColor, float ambientLightIntensity)
         {
@@ -154,6 +126,26 @@ namespace PaletteSwapper
                     a = 0.5f + (float)rand.NextDouble() / 2
                 };
             }
+        }
+
+        public void OnLoadGlobal(GlobalSettings s)
+        {
+            Settings = s;
+        }
+
+        public GlobalSettings OnSaveGlobal()
+        {
+            return Settings;
+        }
+
+        private void LiftSaveGlobalSettings()
+        {
+            base.SaveGlobalSettings();
+        }
+
+        new public static void SaveGlobalSettings()
+        {
+            instance.LiftSaveGlobalSettings();
         }
     }
 }

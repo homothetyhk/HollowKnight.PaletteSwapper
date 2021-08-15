@@ -11,7 +11,6 @@ namespace PaletteSwapper
     public class Disco : MonoBehaviour
     {
         private static GameObject parent;
-
         private static Color color;
 
         public static void Setup()
@@ -41,7 +40,7 @@ namespace PaletteSwapper
                 color = PaletteSwapper.instance.RandomColor();
                 yield return new WaitUntil(() => GameManager.instance != null && GameManager.instance.IsGameplayScene() && GameManager.instance.sm != null);
                 SceneManager.SetLighting(color, SceneManager.AmbientIntesityMix);
-                yield return new WaitForSeconds(PaletteSwapper.instance.Settings.DiscoTimer);
+                yield return new WaitForSeconds(PaletteSwapper.Settings.DiscoTimer);
             }
         }
 
@@ -49,6 +48,5 @@ namespace PaletteSwapper
         {
             orig(color, ambientLightIntensity);
         }
-
     }
 }

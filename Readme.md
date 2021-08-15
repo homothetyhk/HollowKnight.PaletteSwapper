@@ -1,4 +1,5 @@
 PaletteSwapper is a toggleable mod to change the color tint of rooms. 
+**PLEASE TAKE PRECAUTIONS AND EXERCISE DISCRETION BEFORE USING THIS MOD IF YOU HAVE PHOTOSENSITIVITY**
 - To edit settings open the PaletteSwapper.GlobalSettings.json file in the saves folder, in AppData
 - By default random colors are chosen uniformly in each RGBA component, with the alpha constrained to [0.5, 1.0].
 - Settings
@@ -6,7 +7,7 @@ PaletteSwapper is a toggleable mod to change the color tint of rooms.
 		- RandomByMapZone: all rooms in the same area receive the same random tint. The palette can be rerandomized by toggling the mod.
 		- RandomByRoom: each room receives its own random tint. The palette can be rerandomized by toggling the mod.
 		- UsePaletteFromSettings: each map zone will receive the color tint defined in the GlobalSettings Palette
-		- Disco: the random tint is changed on a fixed time increment. **PLEASE TAKE PRECAUTIONS AND EXERCISE DISCRETION BEFORE USING THIS MODE IF YOU HAVE PHOTOSENSITIVITY**
+		- Disco: the random tint is changed on a fixed time increment.
 		- LighterColors: colors are chosen randomly with RGB in [0.5,1.0] and A = 0.5.
 		- DarkerColors: colors are chosen randomly with RGB in [0.0,0.5] and A = 1.0.
 	- FloatValues
